@@ -1,0 +1,11 @@
+export { default as Camera } from "./camera";
+export { default as Computer } from "./computer";
+export { default as Hero } from "./hero";
+export { default as Logo } from "./logo";
+export { default as Mic } from "./mic";
+export { default as Next } from "./next";
+export { default as NoCamera } from "./no-camera";
+export { default as NoComputer } from "./no-computer";
+export { default as NoMic } from "./no-mic";
+export { default as Phone } from "./phone";
+export { default as Vercel } from "./vercel";
