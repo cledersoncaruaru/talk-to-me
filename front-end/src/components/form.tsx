@@ -1,3 +1,5 @@
+"use client";
+
 // Importando o hook useState do React para gerenciar o estado do componente.
 import { useState } from "react";
 
