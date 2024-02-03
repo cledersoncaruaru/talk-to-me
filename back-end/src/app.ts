@@ -1,68 +1,77 @@
-// Importando os módulos necessários do Express, Socket.io e CORS.
+// Importação das bibliotecas necessárias do Express, HTTP, Cors e Socket.IO
 import express, { Application } from 'express';
 import http from 'http';
 import cors from 'cors';
 import { Server, Socket } from 'socket.io';
 
-// Classe principal App que configura o servidor Express e o Socket.io.
+// Classe principal da aplicação
 class App {
+  // Declaração de membros privados da classe
   private app: Application;
   private http: http.Server;
   private io: Server;
 
-  // Construtor que inicializa o servidor Express e o Socket.io.
+  // Construtor da classe
   constructor() {
-    // Criando uma instância do aplicativo Express.
+    // Inicialização do Express
     this.app = express();
     
-    // Criando uma instância do servidor HTTP utilizando o Express.
+    // Criação de um servidor HTTP usando o Express
     this.http = new http.Server(this.app);
-    
-    // Criando uma instância do servidor Socket.io associado ao servidor HTTP.
+
+    // Configuração do Socket.IO para o mesmo servidor HTTP
     this.io = new Server(this.http, {
       cors: {
-        origin: '*',  // Configuração de CORS permitindo acesso de qualquer origem.
+        origin: '*',
       },
     });
   }
 
-  // Método para iniciar o servidor HTTP na porta 3333.
+  // Método para iniciar o servidor
   public listen() {
     this.http.listen(3333, () => {
       console.log('Server running on port 3333');
     });
   }
 
-  // Método para configurar eventos do Socket.io para a namespace '/streams'.
+  // Método para configurar eventos de socket
   public listenSocket() {
+    // Configuração de um namespace '/streams' no Socket.IO
     this.io.of('/streams').on('connection', this.socketEvents);
   }
 
-  // Método privado que lida com eventos de Socket.io.
+  // Método privado para manipular eventos de socket
   private socketEvents(socket: Socket) {
+    // Evento de conexão de socket
     console.log('Socket connected: ' + socket.id);
 
-    // Evento 'subscribe' para adicionar um usuário à sala.
+    // Evento 'subscribe' - lida com a entrada do usuário em uma sala
     socket.on('subscribe', (data) => {
-      console.log('User joined room: ' + data.roomId);
-      
-      // O socket se junta à sala identificada por data.roomId.
+      console.log('usuario inserido na sala: ' + data.roomId);
       socket.join(data.roomId);
+      socket.join(data.socketId);
 
-      // Evento 'chat' para lidar com mensagens de chat.
-      socket.on('chat', (data) => {
-        console.log('🚀 ~ App ~ socket.on ~ data:', data);
-        
-        // Enviando mensagem para todos os membros da sala, exceto o remetente.
-        socket.broadcast.to(data.roomId).emit('chat', {
-          message: data.message,
+      const roomsSession = Array.from(socket.rooms);
+
+      // Verifica se há mais de uma sala na sessão e emite 'new user' para os outros usuários na sala
+      if (roomsSession.length > 1) {
+        socket.to(data.roomId).emit('new user', {
+          socketId: socket.id,
           username: data.username,
-          time: data.time,
         });
-      });
+      }
     });
+
+    // Outros eventos de socket (newUserStart, sdp, ice candidates, chat) são tratados da mesma forma
+    // ...
+
+    // Comentado: Evento 'disconnect' - desconectar um socket
+    // socket.on('disconnect', () => {
+    //   console.log('Socket desconectado: ' + socket.id);
+    //   socket.disconnect();
+    // });
   }
 }
 
-// Exportando a classe App para ser utilizada em outros arquivos.
+// Exporta a classe App para ser usada em outros arquivos
 export { App };
