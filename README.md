@@ -27,7 +27,7 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
 
 ## 💻 Projeto
 
-O Talk to Me é um clone do Google Meet onde é possível entrar em uma nova, criar uma nova sala, digitar no chat e ligar a câmera.
+O Talk to Me é um clone do Google Meet onde é possível entrar em uma sala, criar uma nova sala, digitar no chat e ligar a câmera
 
 ## 📝 Licença
 
